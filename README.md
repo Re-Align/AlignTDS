@@ -158,11 +158,11 @@ python src/demo/generate_html.py llama2_tp
 
 ### TODOs
 
-[] intergrate the generation of aligned LLMs as part of the token logits computation 
-[] use vllm lib to improve the efficiency 
-[] add an interactive demo 
-[] add results of more larger LLMs
-[] compare SFTed LLM and DPO/RLHF-ed LLMs
+- [ ] intergrate the generation of aligned LLMs as part of the token logits computation 
+- [ ] use vllm lib to improve the efficiency 
+- [ ] add an interactive demo 
+- [ ] add results of more larger LLMs
+- [ ] compare SFTed LLM and DPO/RLHF-ed LLMs
 
 ## Citation 
 
