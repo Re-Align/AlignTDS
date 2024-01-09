@@ -11,19 +11,34 @@ This is part of the Re-Align project by AI2 Mosaic. Please find more information
 [![Alignment Image](https://allenai.github.io/re-align/images/urial_tds_short.png)](https://allenai.github.io/re-align/images/urial_tds_short.png)
 
 
-**How can we know _what is changed by alignment tuning_ (i.e., instruction tuning via SFT and preference learning via RLHF)?**
+### How can we know what are changed by alignment tuning?
 
-...
+Our analysis is based on token distribution shifts (TDS).
 
-<details>
-  <summary>Click to show/hide details of TDS analysis</summary>
+#### The pipeline is as follows:
 
-**To easily analyze the TDS at each position, we define three types of positions based on the rank of aligned token (**oₜ**) in the token list ranked by **P<sub>base</sub>**:**
+1. We choose a pair of base and aligned LLMs (e.g., Llama-2 and Llama-2-chat).
+2. Given a user query (i.e., instruction) **q**, we first input it to the aligned LLM and get its answer (via greedy decoding). We call this answer from the aligned model as **o**={o<sub>1</sub>, o<sub>2</sub>, ..., o<sub>T</sub>}. We save the distribution at each position **t**, which is named **P<sub>aligned</sub>**.
+3. For each token position **t**, we use the context {**q**, o<sub>1</sub>, o<sub>2</sub>, ..., o<sub>t-1</sub>} as input to the base LLM (untuned) and get the token distribution of the base LLM for the next position **t**. Let's name this distribution **P<sub>base</sub>**.
+4. Now, we can analyze what are changed by alignment tuning through the difference between **P<sub>aligned</sub>** and **P<sub>base</sub>** at each position!
 
-1. **Unshifted positions:** the aligned token (i.e., top 1 from **P<sub>aligned</sub>**) is also the top 1 token from **P<sub>base</sub>**.
+#### To easily analyze the TDS at each position, we define three types of positions based on the rank of aligned token (**o<sub>t</sub>**) in the token list ranked by **P<sub>base</sub>**:
+
+1. **Unshifted positions:** the aligned token (i.e., top 1 from **P<sub>aligned</sub>**) is also the top 1 token from **P<sub>base</sub>**
 2. **Marginal positions:** the aligned token is within the 2nd or 3rd tokens ranked by **P<sub>base</sub>**.
 3. **Shifted positions:** the aligned token's rank is not within the top 3 tokens from **P<sub>base</sub>**.
-</details>
+
+---
+
+#### Web Demos for TDS analysis
+
+**You can visualize the token distribution shifts easily with our web demos:**
+
+- TDS demo: [Llama-2-7b vs Llama-2-7b-chat](tds/llama2/) (shifted ratio: **7.8%**)
+- TDS demo: [Llama-2-7b vs Vicuna-7b-v1.5](tds/vicuna/) (shifted ratio: **4.8%**)
+- TDS demo: [Mistral-7b vs Mistral-7b-instruct](tds/mistral/) (shifted ratio: **5.2%**)
+
+
 
 ---
 
@@ -74,16 +89,17 @@ This is part of the Re-Align project by AI2 Mosaic. Please find more information
 
 
 
+## Steps 
 
-## Generate outputs from aligned models 
+### Generate outputs from aligned models 
 
 Here we use a generated output file that contains the outputs of Llama-2-7b-chat on just-eval-instruct. 
 Filepath of an example data: `data/Llama-2-7b-chat-hf.json`
 Please see how to generate outputs from aligned models in https://github.com/re-align/URIAL/ .
 
-## Run Logit analysis 
+### Run Logit analysis 
 
-### Save the token Logits of aligned models 
+#### Save the token Logits of aligned models 
 ```bash 
 # i2i   
 instruct_data_file="data/Llama-2-7b-chat-hf.json"
@@ -106,7 +122,7 @@ python src/scripts/merge_logits.py saved_logits/just_eval_1000/llama/ llama i2i
 ```
 
 
-### Save the token logits of base models
+#### Save the token logits of base models
 ```bash 
 logits_folder="saved_logits/just_eval_1000/llama2_tp/shards/"
 mkdir -p $logits_folder
@@ -128,13 +144,25 @@ python src/scripts/merge_logits.py saved_logits/just_eval_1000/llama2_tp/ llama2
 ```
 
 
-### Data Reformatting
+#### Data Reformatting
 ```bash 
 python src/demo/data_prep.py llama2_tp saved_logits/just_eval_1000/llama2/llama2-i2i.pkl saved_logits/just_eval_1000/llama2_tp/llama2-i2b.pkl
 ```
 
 
-### Generate HTML pages for visualization
+#### Generate HTML pages for visualization
 ```bash
 python src/demo/generate_html.py llama2_tp
+```
+
+
+## Citation 
+
+```bibtex
+@article{Lin2023ReAlign,
+    author = {Bill Yuchen Lin and Abhilasha Ravichander and Ximing Lu and Nouha Dziri and Melanie Sclar and Khyathi Chandu and Chandra Bhagavatula and Yejin Choi},
+    journal = {ArXiv preprint},
+    title = {The Unlocking Spell on Base LLMs: Rethinking Alignment via In-Context Learning},
+    year = {2023}
+}
 ```
