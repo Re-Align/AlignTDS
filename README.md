@@ -1,5 +1,5 @@
 # AlignTDS
-Analyzing LLM Alignment via Token distribution shift. 
+Analyzing the Alignment of LLMs through the lens of Token Distribution Shift (TDS). 
 
 This is part of the Re-Align project by AI2 Mosaic. Please find more information on our website: [https://allenai.github.io/re-align/](https://allenai.github.io/re-align/index.html) and our [paper](https://arxiv.org/abs/2312.01552).
 
