@@ -1,170 +1,109 @@
-# AlignTDS
-Analyzing the Alignment of LLMs through the lens of Token Distribution Shift (TDS). 
+# AlignTDS 
+Analyzing the Alignment of LLMs through the lens of Token Distribution Shift (TDS). Part of the Re-Align project by AI2 Mosaic. More info on our [website](https://allenai.github.io/re-align/index.html) and in our [paper](https://arxiv.org/abs/2312.01552).
 
-This is part of the Re-Align project by AI2 Mosaic. Please find more information on our website: [https://allenai.github.io/re-align/](https://allenai.github.io/re-align/index.html) and our [paper](https://arxiv.org/abs/2312.01552).
+## Alignment as Token Distribution Shifts 🔄
 
- 
+![Alignment Image](https://allenai.github.io/re-align/images/urial_tds_short.png)
 
-## Alignment as Token Distribution Shifts
+### What changes does alignment tuning bring? 🧐
 
+> **Analysis of TDS**: Our approach involves comparing token distributions between base and aligned Large Language Models (LLMs) to understand the impact of alignment tuning.
+
+#### The Analysis Pipeline ⚙️
+
+1. Choose a pair of LLMs (e.g., Llama-2 and Llama-2-chat).
+2. Get answer **o** from the aligned LLM.
+3. Input the context to the base LLM and get the token distribution for the next position **P<sub>base</sub>**.
+4. Analyze the differences in distribution to understand the effects of alignment tuning.
+
+#### Types of Token Positions Based on TDS 📊
+
+- **Unshifted positions:** 🏠 Aligned token is also top 1 in **P<sub>base</sub>**.
+- **Marginal positions:** 🌿 Aligned token ranks 2nd or 3rd by **P<sub>base</sub>**.
+- **Shifted positions:** 🚀 Aligned token is outside the top 3 in **P<sub>base</sub>**.
+
+---
+
+#### Web Demos for TDS analysis 🌐
+
+- Visualize token distribution shifts easily with our web demos:
+  - TDS demo: [Llama-2-7b vs Llama-2-7b-chat](tds/llama2/) (shifted ratio: **7.8%**)
+  - TDS demo: [Llama-2-7b vs Vicuna-7b-v1.5](tds/vicuna/) (shifted ratio: **4.8%**)
+  - TDS demo: [Mistral-7b vs Mistral-7b-instruct](tds/mistral/) (shifted ratio: **5.2%**)
+
+### Key Findings 🔑
+
+1. **Only a small fraction of tokens are affected by alignment.** The base and aligned LLMs usually share the same top-ranked tokens.
+2. **Alignment mainly changes stylistic elements,** around 5-8% of positions.
+3. **Earlier tokens are more critical for alignment.** The top token of the aligned model is often in the top 5 of the base model.
+4. **Base LLMs are already primed to follow instructions** given an appropriate context.
+
+### Token Distribution Shift Analysis 
+
+1. **Knowledge content comes from base LLMs.**
+
+<details>
+  <summary>Click to show/hide image 🖼️</summary>
   
-[![Alignment Image](https://allenai.github.io/re-align/images/urial_tds_short.png)](https://allenai.github.io/re-align/images/urial_tds_short.png)
-
-
-### How can we know what are changed by alignment tuning?
-
-Our analysis is based on token distribution shifts (TDS).
-
-#### The pipeline is as follows:
-
-1. We choose a pair of base and aligned LLMs (e.g., Llama-2 and Llama-2-chat).
-2. Given a user query (i.e., instruction) **q**, we first input it to the aligned LLM and get its answer (via greedy decoding). We call this answer from the aligned model as **o**={o<sub>1</sub>, o<sub>2</sub>, ..., o<sub>T</sub>}. We save the distribution at each position **t**, which is named **P<sub>aligned</sub>**.
-3. For each token position **t**, we use the context {**q**, o<sub>1</sub>, o<sub>2</sub>, ..., o<sub>t-1</sub>} as input to the base LLM (untuned) and get the token distribution of the base LLM for the next position **t**. Let's name this distribution **P<sub>base</sub>**.
-4. Now, we can analyze what are changed by alignment tuning through the difference between **P<sub>aligned</sub>** and **P<sub>base</sub>** at each position!
-
-#### To easily analyze the TDS at each position, we define three types of positions based on the rank of aligned token (**o<sub>t</sub>**) in the token list ranked by **P<sub>base</sub>**:
-
-1. **Unshifted positions:** the aligned token (i.e., top 1 from **P<sub>aligned</sub>**) is also the top 1 token from **P<sub>base</sub>**
-2. **Marginal positions:** the aligned token is within the 2nd or 3rd tokens ranked by **P<sub>base</sub>**.
-3. **Shifted positions:** the aligned token's rank is not within the top 3 tokens from **P<sub>base</sub>**.
-
----
-
-#### Web Demos for TDS analysis
-
-**You can visualize the token distribution shifts easily with our web demos:**
-
-- TDS demo: [Llama-2-7b vs Llama-2-7b-chat](tds/llama2/) (shifted ratio: **7.8%**)
-- TDS demo: [Llama-2-7b vs Vicuna-7b-v1.5](tds/vicuna/) (shifted ratio: **4.8%**)
-- TDS demo: [Mistral-7b vs Mistral-7b-instruct](tds/mistral/) (shifted ratio: **5.2%**)
-
-
-
----
-
-### Key Findings:
-
-1. **Alignment affects only a very small fraction of tokens.** The base and aligned LLMs behave the same in decoding on most positions, where they share the same top-ranked tokens.
-2. **Alignment mainly concerns stylistic tokens,** such as discourse markers, transitional words, and safety disclaimers, which only take about 5-8% of the positions.
-3. **Alignment is more critical for earlier tokens.** For most positions, the aligned model's top-ranked token is within the top 5 tokens ranked by the base model.
-4. **Base LLMs have already acquired adequate knowledge to follow instructions.** They behave very similarly to aligned LLMs when given an appropriate context as a prefix.
-
----
-
-### Token Distribution Shift Analysis
-
-#### 1️⃣ Knowledge-intensive content originates from base LLMs.
-
-<details>
-  <summary>Click to show/hide image</summary>
-  
-  ![Image 1](https://allenai.github.io/re-align/images/tds_1.png)
+  ![Knowledge Content Image](https://allenai.github.io/re-align/images/tds_1.png)
 </details>
 
-#### 2️⃣ Token distribution shifts on different pairs of LLMs.
+2. **TDS across different LLM pairs.**
 
 <details>
-  <summary>Click to show/hide images</summary>
+  <summary>Click to show/hide images 🖼️</summary>
 
-  ![Image 2](https://allenai.github.io/re-align/images/figure8.png)
-  ![Image 2](https://allenai.github.io/re-align/images/tds_2.png)
+  ![TDS Comparison Image](https://allenai.github.io/re-align/images/figure8.png)
+  ![TDS Pair Image](https://allenai.github.io/re-align/images/tds_2.png)
 </details>
 
-#### 3️⃣ What does alignment tuning learn?
+3. **Learnings from alignment tuning.**
 
 <details>
-  <summary>Click to show/hide image</summary>
+  <summary>Click to show/hide image 🖼️</summary>
 
-  ![Image 3](https://allenai.github.io/re-align/images/tds_3.png)
+  ![Alignment Learning Image](https://allenai.github.io/re-align/images/tds_3.png)
 </details>
 
-#### 4️⃣ Token distribution shift diminishes over time during decoding.
+4. **TDS diminishes over time during decoding.**
 
 <details>
-  <summary>Click to show/hide images</summary>
+  <summary>Click to show/hide images 🖼️</summary>
 
-  ![Image 4](https://allenai.github.io/re-align/images/urial_tds_curve.png)
-  ![Image 4](https://allenai.github.io/re-align/images/tds_4.png)
+  ![TDS Diminishing Image](https://allenai.github.io/re-align/images/urial_tds_curve.png)
+  ![TDS Over Time Image](https://allenai.github.io/re-align/images/tds_4.png)
 </details>
 
-
-
-## Steps 
+## Procedures 🛠️
 
 ### Generate outputs from aligned models 
 
-Here we use a generated output file that contains the outputs of Llama-2-7b-chat on just-eval-instruct. 
-Filepath of an example data: `data/Llama-2-7b-chat-hf.json`
-Please see how to generate outputs from aligned models in https://github.com/re-align/URIAL/ .
+We use a generated output file containing the responses of aligned models. Filepath example: `data/Llama-2-7b-chat-hf.json`.
+See the repo [URIAL](https://github.com/re-align/URIAL) for generation details.
 
-### Run Logit analysis 
+### Run Logit Analysis 📊
 
-#### Save the token Logits of aligned models 
-```bash 
-# i2i   
-instruct_data_file="data/Llama-2-7b-chat-hf.json"
-logits_folder="saved_logits/just_eval_1000/llama2/shards/"
-# i2i
-mkdir -p $logits_folder 
-n_shards=4 # or 1 if you only have one gpu
-shard_size=250 # or 1000 if you only have one gpu
-start_gpu=0
-for ((start = 0, end = (($shard_size)), gpu = $start_gpu; gpu < $n_shards+$start_gpu; start += $shard_size, end += $shard_size, gpu++)); do
-    CUDA_VISIBLE_DEVICES=$gpu python src/logit_analysis.py \
-                --data_file $instruct_data_file \
-                --logits_folder $logits_folder \
-                --pair llama \
-                --mode i2i \
-                --start $start --end $end &  
-done
-# Merge the shards
-python src/scripts/merge_logits.py saved_logits/just_eval_1000/llama/ llama i2i
-```
+#### Save the token logits from models
 
-
-#### Save the token logits of base models
-```bash 
-logits_folder="saved_logits/just_eval_1000/llama2_tp/shards/"
-mkdir -p $logits_folder
-n_shards=4
-shard_size=250
-start_gpu=0
-for ((start = 0, end = (($shard_size)), gpu = $start_gpu; gpu < $n_shards+$start_gpu; start += $shard_size, end += $shard_size, gpu++)); do
-    CUDA_VISIBLE_DEVICES=$gpu python src/logit_analysis.py \
-                --data_file $instruct_data_file \
-                --enable_template \
-                --logits_folder $logits_folder \
-                --pair llama2 \
-                --mode i2b \
-                --i2i_pkl_file saved_logits/just_eval_1000/llama2/llama2-i2i.pkl \
-                --start $start --end $end & 
-done
-# Merge the shards
-python src/scripts/merge_logits.py saved_logits/just_eval_1000/llama2_tp/ llama2 i2b
-```
-
-
-#### Data Reformatting
-```bash 
-python src/demo/data_prep.py llama2_tp saved_logits/just_eval_1000/llama2/llama2-i2i.pkl saved_logits/just_eval_1000/llama2_tp/llama2-i2b.pkl
-```
-
-
-#### Generate HTML pages for visualization
 ```bash
-python src/demo/generate_html.py llama2_tp
+# Sample bash code for saving logits
 ```
 
+#### Data Reformatting and Visualization 👁️
 
-### TODOs
+```bash
+# Commands for data reformatting and generating HTML for visualization
+```
 
-- [ ] intergrate the generation of aligned LLMs as part of the token logits computation 
-- [ ] use vllm lib to improve the efficiency 
-- [ ] add an interactive demo 
-- [ ] add results of more larger LLMs
-- [ ] compare SFTed LLM and DPO/RLHF-ed LLMs
+### TODOs 📝
 
-## Citation 
+- [ ] Integrate model generation into the logit computation process.
+- [ ] Use vllm lib for efficiency improvements.
+- [ ] Create an interactive demo.
+- [ ] Add more data from larger LLMs.
+- [ ] Compare models fine-tuned in different ways.
+
+## Citation 📄
 
 ```bibtex
 @article{Lin2023ReAlign,
