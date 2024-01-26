@@ -27,9 +27,9 @@ Analyzing the Alignment of LLMs through the lens of Token Distribution Shift (TD
 #### Web Demos for TDS analysis 🌐
 
 - Visualize token distribution shifts easily with our web demos:
-  - TDS demo: [Llama-2-7b vs Llama-2-7b-chat](tds/llama2/) (shifted ratio: **7.8%**)
-  - TDS demo: [Llama-2-7b vs Vicuna-7b-v1.5](tds/vicuna/) (shifted ratio: **4.8%**)
-  - TDS demo: [Mistral-7b vs Mistral-7b-instruct](tds/mistral/) (shifted ratio: **5.2%**)
+  - TDS demo: [Llama-2-7b vs Llama-2-7b-chat](https://allenai.github.io/re-align/tds/llama2/) (shifted ratio: **7.8%**)
+  - TDS demo: [Llama-2-7b vs Vicuna-7b-v1.5](https://allenai.github.io/re-align/tds/vicuna/) (shifted ratio: **4.8%**)
+  - TDS demo: [Mistral-7b vs Mistral-7b-instruct](https://allenai.github.io/re-align/tds/mistral/) (shifted ratio: **5.2%**)
 
 ### Key Findings 🔑
 
